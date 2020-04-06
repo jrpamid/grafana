@@ -33,7 +33,7 @@ install_plugins()
     echo "Info :: $download_url"
     cd ${GRAFANA_PLUGINS}
     wget -q ${download_url} -O /tmp/${plugin_name}.zip 
-    unzip /tmp/${plugin_name}.zip ${GRAFANA_PLUGNS}    
+    unzip -q /tmp/${plugin_name}.zip ${GRAFANA_PLUGNS}    
   done
   echo "Info :: deleting the donloaded plugin zip bundles"
   rm -f /tmp/grafana*.zip

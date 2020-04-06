@@ -27,7 +27,7 @@ COPY ["files-to-add/conf/grafana.ini", "/tmp/conf/grafana.ini"]
 
 
 RUN yum update -y \
-    && yum install -y wget tar gzip unzip \
+    && yum install -y wget tar gzip unzip bash\
     && mkdir -p ${GRAFANA_HOME}/{logs,scripts} \
     && mkdir -p ${GRAFANA_DATA}/{plugins,dashboards,provisioning} \
     && groupadd ${GRAFANA_USER} \
@@ -39,7 +39,7 @@ RUN yum update -y \
     && cp /tmp/conf/* ${GRAFANA_HOME}/conf \
     && touch ${GRAFANA_HOME}/logs/grafana.log \
     && ln -s ${GRAFANA_HOME}/logs/grafana.log stdout \
-    #&& ${GRAFANA_HOME}/scripts/setup_plugins.sh | tee stdout \
+    && bash ${GRAFANA_HOME}/scripts/setup_plugins.sh | tee stdout \
     && chown -R ${GRAFANA_USER}:${GRAFANA_USER} /opt/grafana \
     && chmod -R 775 ${GRAFANA_HOME} \
     && chown -R ${GRAFANA_USER}:${GRAFANA_USER} /grafana/data \
