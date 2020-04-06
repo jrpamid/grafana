@@ -1,4 +1,7 @@
-ARG centos_ver=8
+# defaults to  latest centos version 8
+ARG ubuntu_ver=8
+
+# defaults to latest grafana version
 ARG grafana_ver=6.7.2
 
 FROM centos:${centos_ver}
@@ -13,30 +16,31 @@ LABEL author=jrpamid.cloudops@gmail.com \
 ENV GRAFANA_PKG=grafana-${grafana_ver}.linux-amd64.tar.gz 
 ENV GRAFANA_URL=https://dl.grafana.com/oss/release/${GRAFANA_PKG} \
     GRAFANA_USER=grafana \
+    GRAFANA_DATA=/opt/grafana/data \
     PATH=$PATH:/opt/grafana/bin:/opt/grafana/scripts 
 
 COPY files-to-add/scripts/ /tmp/scripts/
 
 
 RUN yum update -y \
-    && yum install -y wget tar gzip \
+    && yum install -y wget tar gzip unzip \
     && mkdir -p /opt/grafana \
-    && mkdir -p /grafana/data \
-    && mkdir -p /opt/grafana/{scripts,custom_config} \
+    && mkdir -p ${GRAFANA_DATA}/log \
+    && mkdir -p /opt/grafana/{scripts,custom} \
     && groupadd ${GRAFANA_USER} \
     && useradd -g ${GRAFANA_USER} -r ${GRAFANA_USER} \
     && cd /tmp \
-    && wget ${GRAFANA_URL} \
-    && tar -xvzf /tmp/${GRAFANA_PKG} -C /opt/grafana --strip-components=1 \
-    && mv /tmp/scripts /opt/grafana/scripts \
+    && wget -q ${GRAFANA_URL} \
+    && tar -xzf /tmp/${GRAFANA_PKG} -C /opt/grafana --strip-components=1 \
+    && cp /tmp/scripts/* /opt/grafana/scripts \
+    && touch /opt/grafana/data/log/grafana.log \
+    && ln -s /opt/grafana/data/log/grafana.log stdout \
+    && /opt/grafana/scripts/setup_plugins.sh | tee stdout \
     && chown -R ${GRAFANA_USER}:${GRAFANA_USER} /opt/grafana \
-    && chown -R ${GRAFANA_USER}:${GRAFANA_USER} /grafana/data \
-    && chmod -R 755 /opt/grafana \
-    && chmod -R 755 /grafana/data \
-    && rm -Rf /tmp/${GRAFANA_PKG} \
+    && chmod -R 775 /opt/grafana \
+    && rm -Rf /tmp/grafana* \
     && rm -Rf /tmp/scripts \
     && yum clean all  
-    
 
 USER ${GRAFANA_USER}
 
