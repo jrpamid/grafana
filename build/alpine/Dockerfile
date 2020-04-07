@@ -16,7 +16,7 @@ ENV GRAFANA_HOME=/opt/grafana \
     GLIBC_DOWNLOAD_KEY=https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \ 
     GRAFANA_USER=grafana
 
-COPY ["files-to-add", "/tmp/"]
+COPY ["files-to-add/", "/tmp/"]
 
 RUN apk update && set -x \
     && apk add --no-cache ca-certificates tar wget unzip bash \
