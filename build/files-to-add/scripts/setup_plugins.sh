@@ -1,25 +1,7 @@
 # variables section
 plugins=()
 script_dir=/opt/grafana/scripts
-
-if [ ! -z "${GRAFANA_DATA}" ]; then
-  export GRAFANA_DATA=/grafana/data
-  echo "Info :: Setting Grafana data dir = ${GRAFANA_DATA}"
-  export GRAFANA_LOGS=/opt/grafana/logs
-  echo "Info :: Setting Grafana Log dir = ${GRAFANA_LOGS}"
-  export GRAFANA_PLUGINS=${GRAFANA_DATA}/plugins
-  echo "Info :: Setting Grafana Plugins dir = ${GRAFANA_PLUGINS}"
-  export GRAFANA_PROVISIONING=${GRAFANA_DATA}/provisioning
-  echo "Info :: Setting Grafana provisioning dir = ${GRAFANA_PROVISIONING}"
-fi
-
-setup_paths()
-{
-  mkdir -p $GRAFANA_DATA
-  mkdir -p $GRAFANA_LOGS
-  mkdir -p $GRAFANA_PLUGINS
-  mkdir -p $GRAFANA_PROVISIONING 
-}
+GRAFANA_PLUGINS=/grafana/data/plugins
 
 install_plugins()
 {
@@ -33,16 +15,13 @@ install_plugins()
     echo "Info :: $download_url"
     cd ${GRAFANA_PLUGINS}
     wget -q ${download_url} -O /tmp/${plugin_name}.zip 
-    unzip -q /tmp/${plugin_name}.zip ${GRAFANA_PLUGNS}    
+    unzip  /tmp/${plugin_name}.zip ${GRAFANA_PLUGNS}    
   done
   echo "Info :: deleting the donloaded plugin zip bundles"
   rm -f /tmp/grafana*.zip
 
 }
 
-
-echo "Info :: Checking Grafana Environment Variables"
-setup_paths
 
 echo "Info :: Executing setup script"
 echo "Info :: Checking for plugins_list.txt file"

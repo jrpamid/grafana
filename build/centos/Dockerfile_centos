@@ -1,0 +1,54 @@
+# defaults to  latest centos version 8
+ARG centos_ver=8
+
+# defaults to latest grafana version
+ARG grafana_ver=6.7.2
+
+FROM centos:${centos_ver}
+
+ARG grafana_ver
+
+LABEL author=jrpamid.cloudops@gmail.com \
+      app_name=grafana \
+      app_version=6.7.2 \
+      app_description="OpenSource Dashboard tool" \
+      io.k8s.display-name=grafana \
+      io.k8s.description="Opensource Dashboard tool"
+
+ENV GRAFANA_PKG=grafana-${grafana_ver}.linux-amd64.tar.gz 
+ENV GRAFANA_URL=https://dl.grafana.com/oss/release/${GRAFANA_PKG} \
+    GRAFANA_USER=grafana \
+    GRAFANA_HOME=/opt/grafana \
+    GRAFANA_DATA=/grafana/data \
+    PATH=$PATH:/opt/grafana/bin:/opt/grafana/scripts 
+
+COPY ["files-to-add","/tmp/"]
+
+
+RUN yum update -y \
+    && yum install -y wget tar gzip unzip bash\
+    && mkdir -p ${GRAFANA_HOME}/{logs,scripts} \
+    && mkdir -p ${GRAFANA_DATA}/{plugins,dashboards,provisioning} \
+    && groupadd ${GRAFANA_USER} \
+    && useradd -g ${GRAFANA_USER} -r ${GRAFANA_USER} \
+    && cd /tmp \
+    && wget -q ${GRAFANA_URL} \
+    && tar -xzf /tmp/${GRAFANA_PKG} -C ${GRAFANA_HOME} --strip-components=1 \
+    && cp /tmp/scripts/* ${GRAFANA_HOME}/scripts \
+    && cp /tmp/conf/* ${GRAFANA_HOME}/conf \
+    && bash ${GRAFANA_HOME}/scripts/setup_plugins.sh | tee stdout \
+    && chown -R ${GRAFANA_USER}:${GRAFANA_USER} ${GRAFANA_HOME} \
+    && chmod -R 775 ${GRAFANA_HOME} \
+    && chown -R ${GRAFANA_USER}:${GRAFANA_USER} ${GRAFANA_DATA} \
+    && chmod  -R 775 ${GRAFANA_DATA} \
+    && rm -Rf /tmp/grafana* /tmp/scripts /tmp/conf /var/cache/yum/* \
+    && yum clean all  
+
+USER ${GRAFANA_USER}
+
+WORKDIR ${GRAFANA_HOME}/bin
+
+EXPOSE 3000    
+
+ENTRYPOINT ["grafana-server"]
+CMD ["--config","/opt/grafana/conf/grafana.ini"]

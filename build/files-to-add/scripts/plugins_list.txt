@@ -1,9 +1,4 @@
 grafana-worldmap-panel=https://grafana.com/api/plugins/grafana-worldmap-panel/versions/0.2.1/download
-grafana-peichart-panel=https://grafana.com/api/plugins/grafana-piechart-panel/versions/1.4.0/download
-grafana-blendstat-panel=https://grafana.com/api/plugins/farski-blendstat-panel/versions/1.0.2/download
-grafana-bubblechart-panel=https://grafana.com/api/plugins/digrich-bubblechart-panel/versions/1.1.0/download
+grafana-pichart-panel=https://grafana.com/api/plugins/grafana-piechart-panel/versions/1.4.0/download
 grafana-flwocharting-panel=https://grafana.com/api/plugins/agenty-flowcharting-panel/versions/0.7.0/download
-grafana-multistat-panel=https://grafana.com/api/plugins/michaeldmoore-multistat-panel/versions/1.2.7/download
-grafana-hawkular-panel=https://grafana.com/api/plugins/hawkular-datasource/versions/1.1.1/download
-grafana-kubegraf-plugin=https://grafana.com/api/plugins/devopsprodigy-kubegraf-app/versions/1.3.0/download
 grafana-kubernetes-plugin=https://grafana.com/api/plugins/grafana-kubernetes-app/versions/1.0.1/download
