@@ -22,8 +22,7 @@ ENV GRAFANA_URL=https://dl.grafana.com/oss/release/${GRAFANA_PKG} \
     GRAFANA_DATA=/grafana/data \
     PATH=$PATH:/opt/grafana/bin:/opt/grafana/scripts 
 
-COPY ["files-to-add/scripts/setup_plugins.sh","files-to-add/scripts/plugins_list.txt", "/tmp/scripts/"]
-COPY ["files-to-add/conf/grafana.ini", "/tmp/conf/grafana.ini"]
+COPY ["files-to-add/", "/tmp/"]
 
 
 RUN apt-get update -y \
@@ -38,13 +37,9 @@ RUN apt-get update -y \
     && tar -xzf /tmp/${GRAFANA_PKG} -C /opt/grafana --strip-components=1 \
     && cp /tmp/scripts/* ${GRAFANA_HOME}/scripts \
     && cp /tmp/conf/* ${GRAFANA_HOME}/conf \
-    && touch ${GRAFANA_HOME}/logs/grafana.log \
-    && ln -s ${GRAFANA_HOME}/logs/grafana.log stdout \
     && bash ${GRAFANA_HOME}/scripts/setup_plugins.sh | tee stdout \
-    && chown -R ${GRAFANA_USER}:${GRAFANA_USER} /opt/grafana \
-    && chmod -R 775 ${GRAFANA_HOME} \
-    && chown -R ${GRAFANA_USER}:${GRAFANA_USER} /grafana/data \
-    && chmod  -R 775 ${GRAFANA_DATA} \
+    && chown -R ${GRAFANA_USER}:${GRAFANA_USER} ${GRAFANA_HOME} ${GRAFANA_DATA} \
+    && chmod -R 775 ${GRAFANA_HOME} ${GRAFANA_DATA}\
     && rm -Rf /tmp/grafana* /tmp/scripts /tmp/conf /var/cache/apt/* \
     && apt-get clean all  
 

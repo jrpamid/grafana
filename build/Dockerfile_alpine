@@ -30,17 +30,11 @@ RUN apk update && set -x \
     && mkdir -p ${GRAFANA_HOME} ${GRAFANA_HOME}/logs ${GRAFANA_HOME}/scripts \
     && mkdir -p ${GRAFANA_DATA} ${GRAFANA_DATA}/plugins ${GRAFANA_DATA}/dashboards ${GRAFANA_DATA}/provisioning \
     && tar xzf ${GRAFANA_PKG} -C /opt/grafana --strip-components=1 \
-    && cp /tmp/scripts/* ${GRAFANA_HOME}/scripts \
     && cp /tmp/conf/* ${GRAFANA_HOME}/conf \
-    && ln -s ${GRAFANA_HOME}/logs/grafana.log stdout \
-    && /bin/bash ${GRAFANA_HOME}/scripts/setup_plugins.sh | tee stdout \
     && chmod -R 775 ${GRAFANA_HOME} ${GRAFANA_DATA} \
     && chown -R ${GRAFANA_USER}:${GRAFANA_USER} ${GRAFANA_HOME} ${GRAFANA_DATA} \
-    && ls -l ${GRAFANA_HOME} ${GRAFANA_HOME}/bin \
     && cp ${GRAFANA_HOME}/bin/grafana-server ${GRAFANA_HOME}/bin/grafana-cli  /usr/local/bin \
-    && rm -Rf /tmp/grafana* /var/cache/apk/* /tmp/${GRAFANA_PKG} \
-    && pwd \
-    && ls -l /opt/grafana/bin   
+    && rm -Rf /tmp/grafana* /var/cache/apk/* /tmp/${GRAFANA_PKG} 
 
 WORKDIR "${GRAFANA_HOME}/bin"
 
